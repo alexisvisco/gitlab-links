@@ -5,10 +5,10 @@ import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.TextTransferable;
@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,12 +46,18 @@ public class CopyAsGitlabLinkAction extends AnAction {
         Optional<String> branch = getBranch(project, currentFile);
         if (branch.isEmpty()) return;
 
+        var filePath = getFilePath(project, currentFile);
+        if (filePath.isEmpty()) return;
+
 
         var link = Paths.get(sshToHttps(
                         firstRemoteGitlabUrl.get()),
                 "-", "tree", branch.get(),
-                currentFile.getPath().replace(project.getBasePath(), "")
+                filePath.get()
         ) + formatLineUrl.get();
+
+        System.out.println(currentFile.getPath());
+        System.out.println(project.getBasePath());
 
         CopyPasteManager.getInstance().setContents(new TextTransferable(link));
         try {
@@ -61,6 +68,20 @@ public class CopyAsGitlabLinkAction extends AnAction {
             }
         } catch (MalformedURLException ignored) {
         }
+    }
+
+    private Optional<String> getFilePath(Project project, VirtualFile currentFile) {
+        var mod = ModuleUtil.findModuleForFile(currentFile, project);
+        if (mod == null) {
+            return Optional.of(currentFile.getPath().replace(project.getBasePath(), ""));
+        }
+
+        // got bla/bla/module.iml: removing the module.iml
+        String[] pathElements = mod.getModuleFilePath().split("/");
+        var finalPath = Arrays.stream(pathElements).limit(pathElements.length - 1).collect(Collectors.joining("/"));
+
+        // currentFile.getPath() = directory_path/thing/file.ext: removing directory_path
+        return Optional.of(currentFile.getPath().replace(finalPath, ""));
     }
 
     private Optional<String> getUrlLineSelection(Editor editor) {
