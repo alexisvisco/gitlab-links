@@ -1,0 +1,34 @@
+<idea-plugin>
+    <id>fr.alexisvisco.gitlablinks</id>
+    <name>Gitlab Links</name>
+    <version>1.0</version>
+    <vendor email="alexis.viscogliosi@outlook.fr">Alexis Viscogliosi</vendor>
+
+    <description>
+        Click on a line or select text and get the appropriate gitlab link in your clipboard.
+        It also open a browser with the link copied.
+
+        Works with SSH remote url. (Non tested with https, who use https for git clone?)
+    </description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <action id="fr.alexisvisco.gitlablinks.fr.alexisvisco.gitlablinks.actions.CopyAsGitlabLinkAction"
+                class="fr.alexisvisco.gitlablinks.actions.CopyAsGitlabLinkAction"
+                text="Copy As Gitlab Link"
+                description="Copy As gitlab link"
+                icon="GitlabLinksIcons.GitlabIcon">
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="$Copy"/>
+        </action>
+    </actions>
+</idea-plugin>

@@ -1,0 +1,39 @@
+plugins {
+    id 'org.jetbrains.intellij' version '1.1.4'
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+tasks.compileJava {
+    sourceCompatibility = "${JavaVersion.VERSION_11}"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+publishPlugin {
+    token = System.getenv("INTELLIJ_PUBLISH_TOKEN")
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version = '2021.2.1'
+    plugins = ["git4idea"]
+}
+patchPluginXml {
+    changeNotes = """No changes notes."""
+}
+test {
+    useJUnitPlatform()
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
