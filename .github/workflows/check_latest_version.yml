@@ -1,0 +1,15 @@
+name: Check version
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check version against master (should be different)
+        run: bash scripts/check_version.sh
+

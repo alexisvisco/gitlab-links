@@ -91,15 +91,16 @@ public class CopyAsGitlabLinkAction extends AnAction {
         Optional<Integer> lineEnd = Optional.empty();
 
         var vpStart = selModel.getSelectionStartPosition();
+
+
         if (vpStart == null) {
-            lineStart = editor.getCaretModel().getPrimaryCaret().getVisualLineStart();
+            lineStart = editor.getCaretModel().getPrimaryCaret().getLogicalPosition().line;
         } else {
-            lineStart = vpStart.getLine();
+            lineStart =  editor.getDocument().getLineNumber(selModel.getSelectionStart());
         }
 
-        var vpEnd = selModel.getSelectionEndPosition();
-        if (vpEnd != null && vpEnd.getLine() != lineStart) {
-            lineEnd = Optional.of(vpEnd.getLine());
+        if (selModel.hasSelection()) {
+            lineEnd = Optional.of(editor.getDocument().getLineNumber(selModel.getSelectionEnd()));
         }
 
         var formatLineUrl = String.format("#L%d", lineStart + 1) +
