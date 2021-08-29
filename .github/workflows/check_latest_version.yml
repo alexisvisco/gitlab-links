@@ -11,5 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check version against master (should be different)
-        run: bash scripts/check_version.sh
+        run: bash scripts/check_latest_version.sh
 
